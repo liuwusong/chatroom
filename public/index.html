@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>聊天室</title>
+  <link rel="stylesheet" href="/stylesheets/css.css">
+</head>
+
+<body>
+  <div class="content">
+    <div id="message" class="message mb">没有消息</div>
+    <div class="roomList mb" id="roomList">
+      <div class="roomItem active">房间1</div>
+      <div class="roomItem">房间2</div>
+    </div>
+    <div class="messageList mb" id="message-list">
+      <div class="messageItem left">
+        <div class="messageContent">你说你在哪里我去炸你</div>
+      </div>
+      <div class="messageItem right">
+        <div class="messageContent">你说你在哪里我去炸你</div>
+      </div>
+      <div class="messageItem left">
+        <div class="messageContent">你说你在哪里我去炸你</div>
+      </div>
+      <div class="messageItem left">
+        <div class="messageContent">你说你在哪里我去炸你</div>
+      </div>
+    </div>
+    <form id="message-form" class="message-form mb">
+      <input type="text" class="message-input" id="send-message" placeholder="请输入消息">
+      <input type="button" class="message-button" value="发送" id="send-button">
+    </form>
+  </div>
+  <script src="/javascript/index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "chatroom",
+  "version": "1.0.0",
+  "description": "聊天室应用",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
+  },
+  "author": "刘武松 (564163433@qq.com)",
+  "license": "ISC",
+  "dependencies": {
+    "mime": "^2.4.6",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
