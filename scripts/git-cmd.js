@@ -69,28 +69,28 @@ function merge(name){
 }
 
 // 拉取
-function pull(){
+function pull(name){
   return new Promise((resolve,reject)=>{
-    nodeCmd.get('git pull origin '+ currentBranch,(err, data, stderr)=>{
+    nodeCmd.get('git pull origin '+ name,(err, data, stderr)=>{
       if(err){
         reject(err);
         return
       }
-      console.log('√ git pull success')
+      console.log('√ git pull ' + name + ' success')
       resolve()
     })
   })
 }
 
 // 推送
-function push(){
+function push(name){
   return new Promise((resolve,reject)=>{
-    nodeCmd.get('git push origin '+ currentBranch,(err, data, stderr)=>{
+    nodeCmd.get('git push origin '+ name,(err, data, stderr)=>{
       if(err){
         reject(err);
         return
       }
-      console.log('√ git push success')
+      console.log('√ git push ' + name + ' success')
       resolve()
     })
   })
@@ -130,9 +130,9 @@ function pushHandler(){
   add().then(()=>{
     return commit(params[0]);
   }).then(()=>{
-    return pull();
+    return pull(currentBranch);
   }).then(()=>{
-    return push();
+    return push(currentBranch);
   }).catch((error)=>{
     console.log(error)
   })
@@ -144,10 +144,10 @@ function mergeHandler(){
   const msg = params[2]
 
   if(to === currentBranch){
-    pull().then(()=>{
+    pull(to).then(()=>{
       return merge(form);
     }).then(()=>{
-      push();
+      push(to);
     })
   }else{
     add().then(()=>{
@@ -155,11 +155,11 @@ function mergeHandler(){
     }).then(()=>{
       return checkout(to)
     }).then(()=>{
-      return pull()
+      return pull(to)
     }).then(()=>{
       return merge(form);
     }).then(()=>{
-      push();
+      push(to);
     })
   }
 }
