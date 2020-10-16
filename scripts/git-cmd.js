@@ -113,7 +113,7 @@ function add (){
 // 提交
 function commit(){
   return new Promise((resolve,reject)=>{
-    nodeCmd.get('git commit -m '+params[0],(err, data, stderr)=>{
+    nodeCmd.get('git commit -m "'+params[0]+'"',(err, data, stderr)=>{
       if(err){
         reject(err);
         return
