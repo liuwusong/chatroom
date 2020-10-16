@@ -41,7 +41,7 @@ function getCurrentBranch(){
 }
 
 // 切换分支
-function checkoutBranch(name){
+function checkout(name){
   return new Promise((resolve,reject)=>{
     nodeCmd.get('git checkout '+ name,(err, data, stderr)=>{
       if(err){
@@ -55,7 +55,7 @@ function checkoutBranch(name){
 }
 
 // 合并分支
-function mergeBranch(name){
+function merge(name){
   return new Promise((resolve,reject)=>{
     nodeCmd.get('git merge '+ name,(err, data, stderr)=>{
       if(err){
@@ -111,9 +111,10 @@ function add (){
 }
 
 // 提交
-function commit(){
+function commit(msg){
   return new Promise((resolve,reject)=>{
-    nodeCmd.get('git commit -m "'+params[0]+'"',(err, data, stderr)=>{
+    const message = msg || '自动提交'
+    nodeCmd.get('git commit -m "'+message+'"',(err, data, stderr)=>{
       if(err){
         reject(err);
         return
@@ -127,7 +128,7 @@ function commit(){
 // 把当前分支提交到远程
 function pushHandler(){
   add().then(()=>{
-    return commit();
+    return commit(params[0]);
   }).then(()=>{
     return pull();
   }).then(()=>{
@@ -138,5 +139,27 @@ function pushHandler(){
 }
 
 function mergeHandler(){
-  
+  const form = params[0];
+  const to = params[1];
+  const msg = params[2]
+
+  if(to === currentBranch){
+    pull().then(()=>{
+      return merge(form);
+    }).then(()=>{
+      push();
+    })
+  }else{
+    add().then(()=>{
+      return commit(msg)
+    }).then(()=>{
+      return checkout(to)
+    }).then(()=>{
+      return pull()
+    }).then(()=>{
+      return merge(form);
+    }).then(()=>{
+      push();
+    })
+  }
 }
