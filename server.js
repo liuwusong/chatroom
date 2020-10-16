@@ -2,15 +2,45 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { getType } = require('mime');
+const websocket = require('ws')
+const {Server:wsServer} = websocket;
 
 const cache = {}
 const port = 8000
 const hostname = 'localhost'
 
+const messageQueue = []
+
+// 开启websocket 服务器
+const wss  =  new wsServer({
+  port: 8001,
+})
+wss.on('connection',function(ws){
+  ws.on('message', function(message) {
+    messageQueue.push(message);
+    wss.clients.forEach(function(client) {
+      if (client.readyState === websocket.OPEN) {
+        client.send(messageQueue.join('--|--'));
+      }
+    });
+  });
+  if(messageQueue.length){
+    // 发送聊天记录
+    ws.send(messageQueue.join('--|--'));
+  }
+  ws.onclose = function (){
+    wss.clients.forEach(function(client) {
+      if (client.readyState === websocket.OPEN) {
+        client.send('你的聊天对象已经下线。');
+      }
+    });
+  }
+})
 const server = http.createServer((req, res) => {
   let filePath = './public/index.html';
-
-  if (req.url !== '/') {
+  if(req.method === 'POST' && req.url == '/update_file'){
+    console.log(res.body)
+  }else if (req.url !== '/') {
     filePath = './public' + req.url
   }
   serveStatic(res, cache, filePath)
@@ -36,7 +66,6 @@ function serveStatic(res, cache, absPath) {
       cache[absPath] = content;
       sendFile(res, absPath, content)
     }).catch((error) => {
-      console.log(error);
       send404(res)
     })
   }
@@ -48,11 +77,11 @@ function serveStatic(res, cache, absPath) {
  */
 function hasFile(absPath) {
   return new Promise((resolve, reject) => {
-    fs.exists(path.resolve(__dirname, absPath), (exists) => {
-      if (exists) {
+    fs.exists(path.resolve(__dirname, absPath), (bool) => {
+      if (bool) {
         resolve()
       } else {
-        reject()
+        reject('路由不存在')
       }
     })
   })
@@ -78,11 +107,9 @@ function readFile(absPath) {
  * @param {*} res 
  */
 function send404(res) {
-  res.writeHead(404, {
-    "Content-type": "text/plain;charset=UTF-8"
+  readFile('./public/404.html').then(content=>{
+    sendFile(res,'./public/404.html',content)
   })
-  res.write('文件不存在')
-  res.end()
 }
 
 function sendFile(res, filePath, fileContent) {
