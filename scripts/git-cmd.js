@@ -104,7 +104,7 @@ function add (){
         reject(err);
         return
       }
-      console.log('√ git add . success')
+      console.log('√ git add success')
       resolve()
     })
   })
@@ -131,8 +131,12 @@ function pushHandler(){
   }).then(()=>{
     return pull();
   }).then(()=>{
-    push();
+    return push();
   }).catch((error)=>{
     console.log(error)
   })
+}
+
+function mergeHandler(){
+  
 }
